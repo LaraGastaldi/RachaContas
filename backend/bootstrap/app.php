@@ -1,6 +1,8 @@
 <?php
 
+use App\Domain\Middlewares\Authenticate as MiddlewaresAuthenticate;
 use App\Exceptions\Handler as ExceptionsHandler;
+use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -19,4 +21,5 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withSingletons([
         Handler::class => ExceptionsHandler::class,
+        Authenticate::class => MiddlewaresAuthenticate::class
     ])->create();

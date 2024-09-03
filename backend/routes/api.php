@@ -3,4 +3,4 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-include './Auth/auth.php';
+include_once(base_path() . '/routes/Auth/auth.php');

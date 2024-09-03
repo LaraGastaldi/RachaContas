@@ -25,11 +25,11 @@ class AppServiceProvider extends ServiceProvider
     {
         JsonResource::withoutWrapping();
 
-        // Auth::extend('jwt', function ($app, $name, array $config) {
-        //     return new \App\Domain\Auth\AuthGuard(
-        //         Auth::createUserProvider($config['provider']),
-        //         $app->make('request')
-        //     );
-        // });
+        Auth::extend('jwt', function ($app, $name, array $config) {
+            return new \App\Domain\Auth\AuthGuard(
+                Auth::createUserProvider($config['provider']),
+                $app->make('request')
+            );
+        });
     }
 }
