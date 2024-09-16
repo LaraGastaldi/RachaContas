@@ -8,7 +8,7 @@ class Authenticate
 {
     public function handle($request, Closure $next)
     {
-        if (!auth()->validate(['Authorization' => $request->bearerToken()])) {
+        if (!auth()->validate([])) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 

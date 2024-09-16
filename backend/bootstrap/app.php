@@ -22,4 +22,8 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withSingletons([
         Handler::class => ExceptionsHandler::class,
         Authenticate::class => MiddlewaresAuthenticate::class
-    ])->create();
+    ])
+    ->withProviders([
+        Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
+    ])
+    ->create();
