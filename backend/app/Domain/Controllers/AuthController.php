@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Domain\Controllers;
-use App\Domain\Models\User;
 use App\Domain\Resources\UserResource;
 use App\Domain\Services\AuthService;
 use Illuminate\Http\Request;
@@ -74,7 +73,7 @@ class AuthController extends BaseController
 
     protected function register(Request $request)
     {
-        return $this->service->register($request->all());
+        return $this->service->create($request->all());
     }
 
     public function refreshToken(Request $request)

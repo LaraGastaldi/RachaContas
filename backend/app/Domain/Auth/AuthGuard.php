@@ -2,7 +2,6 @@
 
 namespace App\Domain\Auth;
 
-use App\Domain\Models\User;
 use Illuminate\Auth\TokenGuard;
 
 class AuthGuard extends TokenGuard {
