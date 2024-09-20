@@ -6,19 +6,13 @@ class DebtResource extends BaseResource
 {
     public function toArray($request): array
     {
-        $year = intval($this->year) ?? null;
         return [
             'id' => $this->id,
-            'marca' => $this->make,
-            'modelo' => $this->model,
-            'ano' => $year,
-            'cor' => $this->color,
-            'km' => $this->km,
-            'combustivel' => $this->fuel,
-            'cambio' => $this->transmission,
-            'portas' => intval($this->doors),
-            'preco' => floatval($this->price),
-            'opcionais' => OptionalResource::collection($this->optionals),
+            'name' => $this->name,
+            'description' => $this->description,
+            'total_value' => $this->total_value,
+            'debt_date' => $this->debt_date,
+            'max_pay_date' => $this->max_pay_date,
         ];
     }
 }
