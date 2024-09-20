@@ -18,20 +18,20 @@ class Handler extends \Illuminate\Foundation\Exceptions\Handler
 
         if ($e instanceof \Illuminate\Http\Exceptions\ThrottleRequestsException) {
             return response()->json([
-                'message' => 'Too many requests, please slow down.',
+                'message' => __('passwords.throttled'),
                 'status' => 429
             ], 429);
         }
 
         if ($e instanceof UniqueConstraintViolationException) {
             return response()->json([
-                'email' => ['The email has already been taken.']
+                'email' => [__('validation.unique', ['attribute' => 'email'])]
             ], 422);
         }
 
         if ($e instanceof MethodNotAllowedException) {
             return response()->json([
-                'message' => 'Method not allowed.',
+                'message' => __('errors.method'),
                 'status' => 405
             ], 405);
         }
