@@ -1,5 +1,7 @@
 # RachaContas
 
+Esse é o projeto de Portfólio de Projeto, da faculdade de Engenharia de Software na Católica de Santa Catarina
+
 ## Estrutura do projeto
 - [backend](https://github.com/LaraGastaldi/RachaContas/tree/master/backend)
 
