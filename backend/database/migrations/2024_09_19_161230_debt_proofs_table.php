@@ -17,8 +17,6 @@ return new class extends Migration
 
             $table->longText('src');
             $table->string('type');
-            $table->bigInteger('debt_id');
-            $table->foreign('debt_id')->references('id')->on('debts');
 
             $table->bigInteger('debt_id');
             $table->foreign('debt_id')->references('id')->on('debts');

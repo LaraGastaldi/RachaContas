@@ -19,7 +19,7 @@ class AuthService extends BaseService
         ]);
     }
 
-    public function refreshToken($data) {
-
+    public function create($data) {
+        return (new UserService())->create($data);
     }
 }

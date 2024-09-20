@@ -2,6 +2,7 @@
 
 namespace App\Domain\Controllers;
 use App\Domain\Resources\UserResource;
+use App\Domain\Rules\PhoneRule;
 use App\Domain\Services\AuthService;
 use Illuminate\Http\Request;
 
@@ -65,7 +66,7 @@ class AuthController extends BaseController
     protected function respondWithToken($token)
     {
         return response()->json([
-            'access_token' => $token,
+            'token' => $token,
             'token_type' => 'bearer',
             'expires_in' => auth()->factory()->getTTL() * 60
         ]);
@@ -73,11 +74,14 @@ class AuthController extends BaseController
 
     protected function register(Request $request)
     {
-        return $this->service->create($request->all());
-    }
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'phone' => ['nullable', new PhoneRule],
+        ]);
 
-    public function refreshToken(Request $request)
-    {
-        return $this->service->refreshToken($request->all());
+        return $this->service->create($request->all());
     }
 }
