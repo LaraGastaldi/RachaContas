@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:rachacontas_app/screens/login_screen.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 

@@ -7,13 +7,6 @@ class LoginController extends GetxController {
   final passwordController = TextEditingController();
 
   @override
-  void onInit() {
-    // Simulating obtaining the user name from some local storage
-    emailController.text = 'foo@foo.com';
-    super.onInit();
-  }
-
-  @override
   void onClose() {
     emailController.dispose();
     passwordController.dispose();
