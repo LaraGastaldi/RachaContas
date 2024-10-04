@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:rachacontas_app/services/controllers/login_controller.dart';
+import 'package:flutter_i18n/flutter_i18n.dart';
+import 'package:rachacontas/services/controllers/login_controller.dart';
 import 'package:get/get.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -14,33 +15,52 @@ class LoginScreen extends StatelessWidget {
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(40.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TextField(
-                controller: loginController.emailController,
-                decoration: const InputDecoration(
-                  labelText: 'E-mail',
+          child: Form(
+            key: loginController.loginFormKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TextFormField(
+                  controller: loginController.emailController,
+                  decoration: InputDecoration(
+                    labelText: FlutterI18n.translate(
+                        context, "screens.login.email.label"),
+                  ),
+                  autocorrect: false,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.deny(RegExp(r'\s')),
+                  ],
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return FlutterI18n.translate(
+                          context, "screens.login.email.required");
+                    }
+                    return null;
+                  },
                 ),
-                autocorrect: false,
-                inputFormatters: [
-                  FilteringTextInputFormatter.deny(RegExp(r'\s')),
-                ],
-              ),
-              TextField(
-                controller: loginController.passwordController,
-                decoration: const InputDecoration(
-                  labelText: 'Senha',
+                TextFormField(
+                  obscureText: true,
+                  controller: loginController.passwordController,
+                  decoration: InputDecoration(
+                    labelText: FlutterI18n.translate(
+                        context, "screens.login.password.label"),
+                  ),
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return FlutterI18n.translate(
+                          context, "screens.login.password.required");
+                    }
+                    return null;
+                  },
                 ),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  print(loginController.emailController.text);
-                  print(loginController.passwordController.text);
-                },
-                child: Text('Login'),
-              ),
-            ],
+                ElevatedButton(
+                  onPressed: () {
+                    loginController.login();
+                  },
+                  child: Text('Login'),
+                ),
+              ],
+            ),
           ),
         ),
       ),

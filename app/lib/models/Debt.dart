@@ -1,5 +1,5 @@
-import 'package:rachacontas_app/models/Proof.dart';
-import 'package:rachacontas_app/models/UserToDebt.dart';
+import 'package:rachacontas/models/Proof.dart';
+import 'package:rachacontas/models/UserToDebt.dart';
 
 class Debt {
   int? id;

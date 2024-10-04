@@ -1,4 +1,4 @@
-import 'package:rachacontas_app/models/User.dart';
+import 'package:rachacontas/models/User.dart';
 
 class UserToDebt {
   int? id;
