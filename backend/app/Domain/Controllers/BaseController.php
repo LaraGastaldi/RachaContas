@@ -6,6 +6,7 @@ use App\Domain\Services\BaseService;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
@@ -33,14 +34,14 @@ abstract class BaseController
     }
 
 
-    protected function create(array $data)
+    protected function create(Request $request)
     {
-        return $this->service->create($data);
+        return $this->service->create($request->all());
     }
 
-    protected function update(int $id, array $data)
+    protected function update(int $id, Request $request)
     {
-        return $this->service->update($id, $data);
+        return $this->service->update($id, $request->all());
     }
 
     protected function delete(int $id)

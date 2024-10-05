@@ -13,6 +13,8 @@ class DebtResource extends BaseResource
             'total_value' => $this->total_value,
             'debt_date' => $this->debt_date,
             'max_pay_date' => $this->max_pay_date,
+            'created_at' => $this->created_at,
+            'users' => UserToDebtResource::collection($this->users),
         ];
     }
 }

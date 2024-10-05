@@ -22,7 +22,8 @@ class Debt extends Model
         'description',
         'total_value',
         'debt_date',
-        'max_pay_date'
+        'max_pay_date',
+        'user_id'
     ];
 
     public function userToDebts()
@@ -32,11 +33,16 @@ class Debt extends Model
 
     public function users()
     {
-        return $this->hasManyThrough(User::class, UserToDebt::class);
+        return $this->hasMany(UserToDebt::class);
     }
 
     public function proofs()
     {
         return $this->hasMany(DebtProof::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

@@ -4,9 +4,10 @@ namespace App\Domain\Controllers;
 use App\Domain\Enum\UserToDebtRelationship;
 use App\Domain\Resources\DebtResource;
 use App\Domain\Rules\PhoneRule;
+use App\Domain\Rules\RequiredIfArrayBigger;
 use App\Domain\Services\DebtService;
-use App\Rules\RequiredIn;
-use Illuminate\Validation\Rules\RequiredIf;
+use App\Domain\Rules\RequiredIn;
+use Illuminate\Http\Request;
 
 class DebtController extends BaseController
 {
@@ -21,9 +22,9 @@ class DebtController extends BaseController
         return $this->service->getAllByUser();
     }
 
-    protected function create(array $data)
+    protected function create(Request $request)
     {
-        request()->validate([
+        $request->validate([
             'name' => 'required',
             'description' => 'nullable',
             'total_value' => 'required',
@@ -34,12 +35,12 @@ class DebtController extends BaseController
             'users.*.phone' => ['required_if:users.*.email,null', new PhoneRule],
             'users.*.email' => 'required_if:users.*.phone,null',
             'users.*.name' => 'required',
-            'user.*.value' => 'nullable',
+            'users.*.value' => ['required', new RequiredIfArrayBigger($request->input('users'), 1)],
             'proofs' => 'nullable|array',
             'proofs.*.src' => 'required',
             'proofs.*.type' => 'required',
         ]);
 
-        return $this->service->create($data);
+        return $this->service->create($request->all());
     }
 }
