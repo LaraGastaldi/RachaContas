@@ -6,5 +6,5 @@ Route::middleware(
     'auth'
 )->group(function () {
     Route::get('/debt', [DebtController::class, 'getAllByUser']); 
-    
+    Route::post('/debt', [DebtController::class, 'create']);
 });
