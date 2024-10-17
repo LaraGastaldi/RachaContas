@@ -2,7 +2,9 @@
 
 namespace App\Domain\Services;
 
+use App\Domain\Enum\UserToDebtRelationship;
 use App\Domain\Repository\DebtRepository;
+use App\Jobs\NotifyUsersJob;
 
 class DebtService extends BaseService
 {
@@ -31,6 +33,8 @@ class DebtService extends BaseService
             }, $data['proofs']);
             $debt->proofs()->insert($data['proofs']);
         }
+
+        NotifyUsersJob::dispatch($debt);
 
         return $debt;
     }
