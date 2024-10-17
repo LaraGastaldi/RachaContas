@@ -1,13 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_i18n/flutter_i18n.dart';
+import 'package:rachacontas/providers.dart';
 import 'package:rachacontas/services/controllers/login_controller.dart';
 import 'package:get/get.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   LoginScreen({super.key});
 
   LoginController loginController = Get.put(LoginController());
+
+  @override
+  State<StatefulWidget> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  bool loading = false;
+
+  @override
+  void initState() {
+    eventhub.on('loading', (loading) {
+      print('chegou');
+      setState(() {
+        this.loading = loading;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,15 +33,14 @@ class LoginScreen extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(40.0),
           child: Form(
-            key: loginController.loginFormKey,
+            key: widget.loginController.loginFormKey,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 TextFormField(
-                  controller: loginController.emailController,
-                  decoration: InputDecoration(
-                    labelText: FlutterI18n.translate(
-                        context, "screens.login.email.label"),
+                  controller: widget.loginController.emailController,
+                  decoration: const InputDecoration(
+                    labelText: 'Insira seu e-mail',
                   ),
                   autocorrect: false,
                   inputFormatters: [
@@ -32,32 +48,37 @@ class LoginScreen extends StatelessWidget {
                   ],
                   validator: (value) {
                     if (value!.isEmpty) {
-                      return FlutterI18n.translate(
-                          context, "screens.login.email.required");
+                      return 'O e-mail é requirido';
                     }
                     return null;
                   },
                 ),
                 TextFormField(
                   obscureText: true,
-                  controller: loginController.passwordController,
-                  decoration: InputDecoration(
-                    labelText: FlutterI18n.translate(
-                        context, "screens.login.password.label"),
+                  controller: widget.loginController.passwordController,
+                  decoration: const InputDecoration(
+                    labelText: 'Insira sua senha',
                   ),
                   validator: (value) {
                     if (value!.isEmpty) {
-                      return FlutterI18n.translate(
-                          context, "screens.login.password.required");
+                      return 'A senha é requirida';
                     }
                     return null;
                   },
                 ),
                 ElevatedButton(
-                  onPressed: () {
-                    loginController.login();
-                  },
-                  child: Text('Login'),
+                  onPressed: loading
+                      ? null
+                      : () {
+                          widget.loginController.login();
+                        },
+                  child: loading
+                      ? const SizedBox(
+                          child: CircularProgressIndicator(),
+                          width: 20,
+                          height: 20,
+                        )
+                      : const Text('Login'),
                 ),
               ],
             ),

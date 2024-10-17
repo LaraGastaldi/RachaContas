@@ -2,7 +2,6 @@ import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get/get.dart';
 import 'package:rachacontas/providers.dart';
 import 'package:rachacontas/services/api_service.dart';
@@ -11,6 +10,7 @@ class LoginController extends GetxController {
   final loginFormKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  bool loading = false;
 
   @override
   void onClose() {
@@ -21,26 +21,31 @@ class LoginController extends GetxController {
 
   String? validator(String value) {
     if (value.isEmpty) {
-      return FlutterI18n.translate(
-          Get.context!, 'screens.login_screen.email.required');
+      return 'Campo obrigatório';
     }
     return null;
   }
 
   void login() {
     if (loginFormKey.currentState!.validate()) {
+      eventhub.fire('loading', true);
+      loading = true;
       getIt<ApiService>()
           .login(emailController.text, passwordController.text)
           .then((auth) {
         if (auth.success) {
-          Get.snackbar('Login', FlutterI18n.translate(Get.context!, "screens.login.login.success"), backgroundColor: Colors.greenAccent);
+          Get.snackbar('Login', 'Logado com sucesso', backgroundColor: Colors.greenAccent);
+          Get.offAllNamed('/home');
         } else {
           log('Error on login: ${auth.data}');
-          Get.snackbar('Login', FlutterI18n.translate(Get.context!, "screens.login.login.error"), backgroundColor: Colors.redAccent);
+          Get.snackbar('Login', 'Credenciais incorretas', backgroundColor: Colors.redAccent);
         }
       }).catchError((e) {
         log('Error on login: $e');
         Get.snackbar('Login', 'Error on login');
+      }).whenComplete(() {
+        eventhub.fire('loading', false);
+        loading = false;
       });
     }
   }

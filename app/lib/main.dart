@@ -1,13 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_i18n/flutter_i18n.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:rachacontas/providers.dart';
+import 'package:rachacontas/screens/dashboard_screen.dart';
 import 'package:rachacontas/screens/login_screen.dart';
 
-void main() {
+String? jwt;
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   registerProviders();
+
+  Future<void> main() async {
+    WidgetsFlutterBinding.ensureInitialized();
+
+    jwt = await const FlutterSecureStorage().read(key: 'token');
+    runApp(const MyApp());
+  }
+
   runApp(const MyApp());
 }
 
@@ -23,23 +32,10 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       routes: {
-        '/': (context) => LoginScreen(),
+        '/': (context) => jwt != null ? DashboardScreen() : LoginScreen(),
+        '/home': (context) => DashboardScreen(),
       },
       initialRoute: '/',
-      localizationsDelegates: [
-        FlutterI18nDelegate(
-          translationLoader: FileTranslationLoader(
-            forcedLocale: const Locale('pt', 'BR'),
-            useCountryCode: true,
-          ),
-          missingTranslationHandler: (key, locale) {
-            print("--- Missing Key: $key, languageCode: ${locale?.languageCode} ${locale?.countryCode}");
-          },
-        ),
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate
-      ],
-      builder: FlutterI18n.rootAppBuilder()
     );
   }
 }

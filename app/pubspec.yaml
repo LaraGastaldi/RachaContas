@@ -41,9 +41,10 @@ dependencies:
   intl: any
   dio: ^5.7.0
   flutter_dotenv: ^5.1.0
-  flutter_i18n: ^0.36.2
   flutter_secure_storage: ^9.2.2
   get_it: ^8.0.0
+  draggable_home: ^1.0.5
+  event_hub: ^0.2.1
 
 dev_dependencies:
   flutter_test:
