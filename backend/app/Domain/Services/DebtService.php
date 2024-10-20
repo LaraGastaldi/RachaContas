@@ -22,6 +22,9 @@ class DebtService extends BaseService
         $debt = $this->repository->create($data);
         $data['users'] = array_map(function ($user) use ($debt) {
             $user['debt_id'] = $debt->id;
+            if ($user['relationship'] != UserToDebtRelationship::RECEIVER) {
+                $user['verify_code'] = bin2hex(random_bytes(4));
+            }
             return $user;
         }, $data['users']);
         $debt->users()->insert($data['users']);
