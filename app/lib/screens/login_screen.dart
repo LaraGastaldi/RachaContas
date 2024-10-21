@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:rachacontas/providers.dart';
@@ -19,7 +20,6 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     eventhub.on('loading', (loading) {
-      print('chegou');
       setState(() {
         this.loading = loading;
       });
@@ -29,7 +29,8 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
+      backgroundColor: Colors.greenAccent.shade100,
+      body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(40.0),
           child: Form(
@@ -37,48 +38,64 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                TextFormField(
-                  controller: widget.loginController.emailController,
-                  decoration: const InputDecoration(
-                    labelText: 'Insira seu e-mail',
+                Text(
+                  'Racha Contas',
+                  style: TextStyle(
+                    fontSize: 35,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green,
                   ),
+                ),
+                const Divider(
+                  color: Colors.transparent,
+                  height: 30,
+                ),
+                CupertinoTextField(
+                  controller: widget.loginController.emailController,
+                  placeholder: 'Insira seu e-mail',
                   autocorrect: false,
                   inputFormatters: [
                     FilteringTextInputFormatter.deny(RegExp(r'\s')),
                   ],
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'O e-mail é requirido';
-                    }
-                    return null;
-                  },
                 ),
-                TextFormField(
+                const Divider(
+                  color: Colors.transparent,
+                  height: 30,
+                ),
+                CupertinoTextField(
                   obscureText: true,
                   controller: widget.loginController.passwordController,
-                  decoration: const InputDecoration(
-                    labelText: 'Insira sua senha',
-                  ),
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'A senha é requirida';
-                    }
-                    return null;
-                  },
+                  placeholder: 'Insira sua senha',
                 ),
-                ElevatedButton(
-                  onPressed: loading
-                      ? null
-                      : () {
-                          widget.loginController.login();
-                        },
-                  child: loading
-                      ? const SizedBox(
-                          child: CircularProgressIndicator(),
-                          width: 20,
-                          height: 20,
-                        )
-                      : const Text('Login'),
+
+                const Divider(
+                  color: Colors.transparent,
+                  height: 30,
+                ),
+                CupertinoButton(
+                    onPressed: loading
+                        ? null
+                        : () {
+                      widget.loginController.login();
+                    },
+                    color: Colors.green,
+                    child: loading
+                        ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(),
+                    )
+                        : const Text('Login'),
+                ),
+                const Divider(
+                  color: Colors.transparent,
+                  height: 40,
+                ),
+                InkWell(
+                  onTap: () {
+                    Get.toNamed('/register');
+                  },
+                  child: const Text('Não tem uma conta? Cadastre-se', style: TextStyle(color: Colors.blue),),
                 ),
               ],
             ),

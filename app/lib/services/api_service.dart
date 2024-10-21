@@ -19,6 +19,8 @@ class ApiService {
         data: data,
         options: Options(
           method: method,
+          receiveTimeout: const Duration(seconds: 5),
+          sendTimeout: const Duration(seconds: 5),
           validateStatus: (status) {
             return status! < 500;
           },
@@ -36,6 +38,8 @@ class ApiService {
           "${await EnvService.get('API_URL')}/refresh",
           options: Options(
             method: 'POST',
+            receiveTimeout: const Duration(seconds: 5),
+            sendTimeout: const Duration(seconds: 5),
             validateStatus: (status) {
               return status! < 500;
             },
