@@ -24,7 +24,7 @@ class DebtController extends BaseController
 
     protected function create(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'name' => 'required',
             'description' => 'nullable',
             'total_value' => 'required',
@@ -41,6 +41,6 @@ class DebtController extends BaseController
             'proofs.*.type' => 'required',
         ]);
 
-        return $this->service->create($request->all());
+        return $this->service->create($validated);
     }
 }
