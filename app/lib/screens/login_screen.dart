@@ -38,7 +38,7 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
+                const Text(
                   'Racha Contas',
                   style: TextStyle(
                     fontSize: 35,

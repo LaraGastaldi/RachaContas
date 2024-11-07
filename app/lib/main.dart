@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:rachacontas/providers.dart';
 import 'package:rachacontas/screens/dashboard_screen.dart';
 import 'package:rachacontas/screens/login_screen.dart';
+import 'package:rachacontas/screens/register_screen.dart';
 
 String? jwt;
 void main() async {
@@ -34,6 +35,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => jwt != null ? DashboardScreen() : LoginScreen(),
         '/home': (context) => DashboardScreen(),
+        '/register': (context) => RegisterScreen(),
       },
       initialRoute: '/',
     );
