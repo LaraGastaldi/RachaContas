@@ -7,10 +7,13 @@ import 'package:internet_connection_checker_plus/internet_connection_checker_plu
 import 'package:rachacontas/providers.dart';
 import 'package:rachacontas/services/api_service.dart';
 
-class LoginController extends GetxController {
-  final loginFormKey = GlobalKey<FormState>();
+class RegisterController extends GetxController {
+  final registerFormKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
+  final nameController = TextEditingController();
+  final lastNameController = TextEditingController();
   bool loading = false;
 
   @override
@@ -20,15 +23,21 @@ class LoginController extends GetxController {
     super.onClose();
   }
 
-  String? validator(String value) {
-    if (value.isEmpty) {
+  String? validator(String? value) {
+    if (value == null || value.isEmpty) {
       return 'Campo obrigatório';
     }
     return null;
   }
 
-  void login() {
-    if (loginFormKey.currentState!.validate()) {
+  void register() {
+    if (passwordController.value.text != confirmPasswordController.value.text) {
+      Get.snackbar('Registro', 'Senhas não conferem',
+          backgroundColor: Colors.redAccent);
+      return;
+    }
+
+    if (registerFormKey.currentState!.validate()) {
       eventhub.fire('loading', true);
       loading = true;
       InternetConnection().hasInternetAccess.then((val) {
@@ -40,7 +49,11 @@ class LoginController extends GetxController {
           return;
         }
         getIt<ApiService>()
-            .login(emailController.text, passwordController.text)
+            .register(
+                nameController.text,
+                lastNameController.text,
+                emailController.text,
+                passwordController.text)
             .then((auth) {
           if (auth.success) {
             Get.snackbar('Login', 'Logado com sucesso',
@@ -53,14 +66,14 @@ class LoginController extends GetxController {
           }
         }).catchError((e) {
           log('Error on login: $e');
-          Get.snackbar('Login', 'Erro no login');
+          Get.snackbar('Registro', 'Erro no registro');
         }).whenComplete(() {
           eventhub.fire('loading', false);
           loading = false;
         });
       });
     } else {
-      Get.snackbar('Login', 'Preencha os campos corretamente',
+      Get.snackbar('Registro', 'Preencha os campos corretamente',
           backgroundColor: Colors.redAccent);
     }
   }

@@ -87,6 +87,26 @@ class ApiService {
           success: false, data: null, message: 'Erro ao efetuar login');
     }
   }
+
+  Future<ApiResponse> register(String name, String lastName, String email, String password) async {
+    try {
+      final response = await fetch('register',
+          data: {'first_name': name, 'last_name': lastName, 'email': email, 'password': password}, method: 'POST');
+      if (response.statusCode == 201) {
+        return ApiResponse(
+            success: true,
+            data: response.data,
+            message: 'Registro efetuado com sucesso');
+      }
+      return ApiResponse(
+          success: false,
+          data: response.data,
+          message: 'Erro ao efetuar registro');
+    } catch (e) {
+      return ApiResponse(
+          success: false, data: null, message: 'Erro ao efetuar registro');
+    }
+  }
 }
 
 class ApiResponse {
