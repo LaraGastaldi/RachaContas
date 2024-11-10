@@ -8,7 +8,7 @@ import 'package:get/get.dart';
 class RegisterScreen extends StatefulWidget {
   RegisterScreen({super.key});
 
-  RegisterController loginController = Get.put(RegisterController());
+  RegisterController registerController = Get.put(RegisterController());
 
   @override
   State<StatefulWidget> createState() => _RegisterScreenState();
@@ -16,13 +16,18 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   bool loading = false;
+  AutovalidateMode validateMode = AutovalidateMode.disabled;
 
   @override
   void initState() {
+    super.initState();
     eventhub.on('loading', (loading) {
       setState(() {
         this.loading = loading;
       });
+    });
+    eventhub.on('validateMode', (validateMode) {
+      this.validateMode = validateMode;
     });
   }
 
@@ -38,99 +43,117 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ),
       body: SafeArea(
         child: Center(
-          child: ListView(
-            children: <Widget>[
-              const Divider(
-                color: Colors.transparent,
-                height: 90,
-              ),
-              const Text(
-                'Registrar',
-                style: TextStyle(
-                  fontSize: 35,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.green,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              Form(
-                key: widget.loginController.registerFormKey,
-                child: Padding(
-                  padding: const EdgeInsets.all(40.0),
-                  child: Column(
+          child: Form(
+            autovalidateMode: validateMode,
+            key: widget.registerController.registerFormKey,
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(40.0),
+              child: Column(
+                children: [
+                  const Text(
+                    'Registrar',
+                    style: TextStyle(
+                      fontSize: 35,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.green,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  CupertinoFormSection.insetGrouped(
+                    footer: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 20.0),
+                        child: CupertinoButton(
+                          onPressed: loading
+                              ? null
+                              : () {
+                                  widget.registerController.register();
+                                },
+                          color: Colors.green,
+                          child: loading
+                              ? const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(),
+                                )
+                              : const Text('Criar conta'),
+                        ),
+                      ),
+                    ),
+                    backgroundColor: Colors.transparent,
                     children: [
-                      CupertinoTextField(
+                      CupertinoTextFormFieldRow(
                         placeholder: 'Primeiro nome',
-                        controller: widget.loginController.nameController,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.deny(RegExp(r'[^a-zA-Z\s]')),
-                        ],
+                        controller: widget.registerController.nameController,
+                        validator: (String? value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Campo obrigatório';
+                          }
+                          return null;
+                        },
                       ),
-                      const Divider(
-                        color: Colors.transparent,
-                        height: 30,
-                      ),
-                      CupertinoTextField(
+                      CupertinoTextFormFieldRow(
                         placeholder: 'Sobrenome',
-                        controller: widget.loginController.lastNameController,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.deny(RegExp(r'[^a-zA-Z\s]')),
-                        ],
+                        controller:
+                            widget.registerController.lastNameController,
+                        validator: (String? value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Campo obrigatório';
+                          }
+                          return null;
+                        },
                       ),
-                      const Divider(
-                        color: Colors.transparent,
-                        height: 30,
-                      ),
-                      CupertinoTextField(
+                      CupertinoTextFormFieldRow(
                         placeholder: 'E-mail',
-                        controller: widget.loginController.emailController,
+                        controller: widget.registerController.emailController,
+                        validator: (String? value) {
+                          if (value == null ||
+                              value.isEmpty) {
+                            return 'Campo obrigatório';
+                          }
+                          if (RegExp(r'[a-zA-Z_\-0-9\.]*?@'
+                          r'[a-zA-Z_\-0-9\.]*?\.[a-zA-Z_\-0-9]*')
+                              .allMatches(value)
+                              .isEmpty) {
+                            return 'E-mail inválido';
+                          }
+                          return null;
+                        },
                       ),
-                      const Divider(
-                        color: Colors.transparent,
-                        height: 30,
-                      ),
-                      CupertinoTextField(
+                      CupertinoTextFormFieldRow(
                         placeholder: 'Senha',
                         obscureText: true,
-                        controller: widget.loginController.passwordController,
+                        controller:
+                            widget.registerController.passwordController,
+                        validator: (String? value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Campo obrigatório';
+                          }
+                          return null;
+                        },
                       ),
-                      const Divider(
-                        color: Colors.transparent,
-                        height: 30,
-                      ),
-                      CupertinoTextField(
+                      CupertinoTextFormFieldRow(
                         placeholder: 'Confirmar senha',
                         obscureText: true,
-                        controller: widget.loginController.confirmPasswordController,
-                      ),
-                      const Divider(
-                        color: Colors.transparent,
-                        height: 30,
-                      ),
-                      CupertinoButton(
-                        onPressed: loading
-                            ? null
-                            : () {
-                          widget.loginController.register();
+                        controller:
+                            widget.registerController.confirmPasswordController,
+                        validator: (String? value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Campo obrigatório';
+                          }
+                          if (value !=
+                              widget
+                                  .registerController.passwordController.text) {
+                            return 'Senhas não conferem';
+                          }
+                          return null;
                         },
-                        color: Colors.green,
-                        child: loading
-                            ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(),
-                        )
-                            : const Text('Login'),
-                      ),
-                      const Divider(
-                        color: Colors.transparent,
-                        height: 30,
                       ),
                     ],
                   ),
-                ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),

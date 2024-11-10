@@ -1,6 +1,7 @@
 import 'package:draggable_home/draggable_home.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class DashboardScreen extends StatefulWidget
 {
@@ -46,7 +47,9 @@ class _DashboardScreenState extends State<DashboardScreen>
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              Get.toNamed('/add-debt');
+            },
             child: Text("Nova dívida")
         ),
       ],

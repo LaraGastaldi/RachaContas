@@ -15,6 +15,7 @@ class RegisterController extends GetxController {
   final nameController = TextEditingController();
   final lastNameController = TextEditingController();
   bool loading = false;
+  AutovalidateMode validateMode = AutovalidateMode.disabled;
 
   @override
   void onClose() {
@@ -31,13 +32,8 @@ class RegisterController extends GetxController {
   }
 
   void register() {
-    if (passwordController.value.text != confirmPasswordController.value.text) {
-      Get.snackbar('Registro', 'Senhas não conferem',
-          backgroundColor: Colors.redAccent);
-      return;
-    }
-
     if (registerFormKey.currentState!.validate()) {
+      validateMode = AutovalidateMode.disabled;
       eventhub.fire('loading', true);
       loading = true;
       InternetConnection().hasInternetAccess.then((val) {
@@ -56,16 +52,16 @@ class RegisterController extends GetxController {
                 passwordController.text)
             .then((auth) {
           if (auth.success) {
-            Get.snackbar('Login', 'Logado com sucesso',
+            Get.snackbar('Registro', 'Conta criada. Faça login.',
                 backgroundColor: Colors.greenAccent);
-            Get.offAllNamed('/home');
+            Get.offAllNamed('/login');
           } else {
-            log('Error on login: ${auth.data}');
-            Get.snackbar('Login', 'Credenciais incorretas',
+            log('Error on register: ${auth.data}');
+            Get.snackbar('Registro', 'Credenciais inválidas',
                 backgroundColor: Colors.redAccent);
           }
         }).catchError((e) {
-          log('Error on login: $e');
+          log('Error on register: $e');
           Get.snackbar('Registro', 'Erro no registro');
         }).whenComplete(() {
           eventhub.fire('loading', false);
@@ -73,6 +69,8 @@ class RegisterController extends GetxController {
         });
       });
     } else {
+      validateMode = AutovalidateMode.always;
+      eventhub.fire('validateMode', validateMode);
       Get.snackbar('Registro', 'Preencha os campos corretamente',
           backgroundColor: Colors.redAccent);
     }

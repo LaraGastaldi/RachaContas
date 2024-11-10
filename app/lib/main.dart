@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:rachacontas/providers.dart';
+import 'package:rachacontas/screens/add_debt_screen.dart';
+import 'package:rachacontas/screens/configuration_screen.dart';
 import 'package:rachacontas/screens/dashboard_screen.dart';
 import 'package:rachacontas/screens/login_screen.dart';
 import 'package:rachacontas/screens/register_screen.dart';
@@ -34,8 +36,11 @@ class MyApp extends StatelessWidget {
       ),
       routes: {
         '/': (context) => jwt != null ? DashboardScreen() : LoginScreen(),
+        '/login': (context) => LoginScreen(),
         '/home': (context) => DashboardScreen(),
         '/register': (context) => RegisterScreen(),
+        '/config': (context) => ConfigurationScreen(),
+        '/add-debt': (context) => AddDebtScreen()
       },
       initialRoute: '/',
     );
