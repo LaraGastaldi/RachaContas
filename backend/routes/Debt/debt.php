@@ -9,4 +9,5 @@ Route::middleware(
     Route::post('/debt', [DebtController::class, 'create']);
     Route::patch('/debt/{id}', [DebtController::class, 'update']);
     Route::delete('/debt/{id}', [DebtController::class, 'delete']);
+    ROute::patch('/debt/update-values', [DebtController::class, 'updateValues']);
 });

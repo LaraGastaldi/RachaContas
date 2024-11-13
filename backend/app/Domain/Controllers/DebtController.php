@@ -43,4 +43,37 @@ class DebtController extends BaseController
 
         return $this->service->create($validated);
     }
+
+    public function update($id, Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'sometimes',
+            'description' => 'sometimes',
+            'debt_date' => 'sometimes|date',
+            'max_pay_date' => 'nullable|date',
+            'users' => 'sometimes|array',
+            'users.*.id' => 'required',
+            'users.*.relationship' => ['required', new RequiredIn(UserToDebtRelationship::getRelationships())],
+            'users.*.phone' => ['required_if:users.*.email,null', new PhoneRule],
+            'users.*.email' => 'required_if:users.*.phone,null',
+            'users.*.name' => 'required',
+            'proofs' => 'nullable|array',
+            'proofs.*.src' => 'sometimes',
+            'proofs.*.type' => 'sometimes',
+        ]);
+
+        return $this->service->update($id, $validated);
+    }
+
+    public function updateValues($id, Request $request)
+    {
+        $validated = $request->validate([
+            'users' => 'required|array',
+            'users.*.id' => 'required',
+            'users.*.value' => 'required',
+            'total_value' => 'required',
+        ]);
+
+        return $this->service->updateValues($id, $validated);
+    }
 }
