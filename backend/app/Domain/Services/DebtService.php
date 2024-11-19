@@ -3,9 +3,10 @@
 namespace App\Domain\Services;
 
 use App\Domain\Enum\UserToDebtRelationship;
+use App\Domain\Jobs\NotifyChangesJob;
+use App\Domain\Jobs\NotifyUsersJob;
 use App\Domain\Repository\DebtRepository;
-use App\Jobs\NotifyChangesJob;
-use App\Jobs\NotifyUsersJob;
+use Illuminate\Support\Arr;
 
 class DebtService extends BaseService
 {
@@ -26,8 +27,25 @@ class DebtService extends BaseService
             if ($user['relationship'] != UserToDebtRelationship::RECEIVER) {
                 $user['verify_code'] = bin2hex(random_bytes(4));
             }
+            if (!array_key_exists('phone', $user)) {
+                $user['phone'] = null;
+            }
+            if (!array_key_exists('email', $user)) {
+                $user['email'] = null;
+            }
             return $user;
         }, $data['users']);
+        if (!Arr::first($data['users'], fn ($user) => $user['relationship'] == UserToDebtRelationship::RECEIVER)) {
+            $data['users'][] = [
+                'relationship' => UserToDebtRelationship::RECEIVER,
+                'phone' => auth()->user()->phone,
+                'email' => auth()->user()->email,
+                'name' => auth()->user()->first_name . ' ' . auth()->user()->last_name,
+                'value' => 0,
+                'debt_id' => $debt->id,
+                'verify_code' => null
+            ];
+        }
         $debt->users()->insert($data['users']);
 
         if (isset($data['proofs'])) {
@@ -45,8 +63,7 @@ class DebtService extends BaseService
 
     public function update(int $id, array $data)
     {
-        $debt = $this->repository->create($data);
-        $debt = $this->repository->update($debt);
+        $debt = $this->repository->update($id, $data);
         $data['users'] = array_map(function ($user) use ($debt) {
             $user['debt_id'] = $debt->id;
             return $user;

@@ -42,7 +42,7 @@ class DebtNotification extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'view.mail.verify-your-debt',
+            view: 'mail.verify-your-debt',
             with: [
                 'debt' => $this->debt,
                 'user' => $this->user,
