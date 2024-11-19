@@ -3,6 +3,8 @@ import 'package:rachacontas/models/UserToDebt.dart';
 
 class Debt {
   int? id;
+  String? name;
+  String? description;
   int? totalValue;
   String? debtDate;
   String? maxPayDate;
@@ -11,6 +13,8 @@ class Debt {
 
   Debt(
       {this.id,
+      this.name,
+      this.description,
       this.totalValue,
       this.debtDate,
       this.maxPayDate,
@@ -19,6 +23,8 @@ class Debt {
 
   Debt.fromJson(Map<String, dynamic> json) {
     id = json['id'];
+    name = json['name'];
+    description = json['description'];
     totalValue = json['total_value'];
     debtDate = json['debt_date'];
     maxPayDate = json['max_pay_date'];
@@ -39,6 +45,8 @@ class Debt {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
+    data['name'] = name;
+    data['description'] = description;
     data['total_value'] = totalValue;
     data['debt_date'] = debtDate;
     data['max_pay_date'] = maxPayDate;

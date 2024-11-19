@@ -88,6 +88,25 @@ class ApiService {
     }
   }
 
+  Future<ApiResponse> me() async {
+    try {
+      final response = await fetch('me');
+      if (response.statusCode == 200) {
+        return ApiResponse(
+            success: true,
+            data: response.data,
+            message: 'Usuário carregado com sucesso');
+      }
+      return ApiResponse(
+          success: false,
+          data: response.data,
+          message: 'Erro ao carregar usuário');
+    } catch (e) {
+      return ApiResponse(
+          success: false, data: null, message: 'Erro ao carregar usuário');
+    }
+  }
+
   Future<ApiResponse> register(String name, String lastName, String email, String password) async {
     try {
       final response = await fetch('register',
@@ -105,6 +124,51 @@ class ApiService {
     } catch (e) {
       return ApiResponse(
           success: false, data: null, message: 'Erro ao efetuar registro');
+    }
+  }
+
+  Future<ApiResponse> getDebts() async {
+    try {
+      final response = await fetch('debt');
+      if (response.statusCode == 200) {
+        return ApiResponse(
+            success: true,
+            data: response.data,
+            message: 'Dívidas carregadas com sucesso');
+      }
+      return ApiResponse(
+          success: false,
+          data: response.data,
+          message: 'Erro ao carregar dívidas');
+    } catch (e) {
+      return ApiResponse(
+          success: false, data: null, message: 'Erro ao carregar dívidas');
+    }
+  }
+
+  Future<ApiResponse> addDebt(String name, String description, double value, DateTime maxPayDate) async {
+    try {
+      final response = await fetch('debts',
+          data: {
+            'name': name,
+            'description': description,
+            'value': value,
+            'max_pay_date': maxPayDate.toIso8601String()
+          },
+          method: 'POST');
+      if (response.statusCode == 201) {
+        return ApiResponse(
+            success: true,
+            data: response.data,
+            message: 'Dívida adicionada com sucesso');
+      }
+      return ApiResponse(
+          success: false,
+          data: response.data,
+          message: 'Erro ao adicionar dívida');
+    } catch (e) {
+      return ApiResponse(
+          success: false, data: null, message: 'Erro ao adicionar dívida');
     }
   }
 }

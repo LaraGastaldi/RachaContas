@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:rachacontas/providers.dart';
+import 'package:rachacontas/services/api_service.dart';
 import 'package:rachacontas/services/controllers/login_controller.dart';
 import 'package:get/get.dart';
 
@@ -19,6 +20,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void initState() {
+    getIt<ApiService>().me().then((auth) {
+      if (auth.success) {
+        Get.offAllNamed('/home');
+      }
+    });
     eventhub.on('loading', (loading) {
       setState(() {
         this.loading = loading;
