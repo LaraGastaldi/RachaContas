@@ -1,6 +1,8 @@
 import { Routes } from '@angular/router';
+import { NotFoundComponent } from './not-found/not-found.component';
 import { VerifyComponent } from './verify/verify.component';
 
 export const routes: Routes = [
-    { path: '/verify/:code', component: VerifyComponent, title: 'Valide sua dívida' }
+    { path: 'verify/:id', component: VerifyComponent },
+    { path: '**', component: NotFoundComponent }
 ];
