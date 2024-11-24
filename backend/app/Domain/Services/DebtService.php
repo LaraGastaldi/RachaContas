@@ -33,6 +33,8 @@ class DebtService extends BaseService
             if (!array_key_exists('email', $user)) {
                 $user['email'] = null;
             }
+            $user['created_at'] = $debt->created_at;
+            $user['updated_at'] = $debt->updated_at;
             return $user;
         }, $data['users']);
         if (!Arr::first($data['users'], fn ($user) => $user['relationship'] == UserToDebtRelationship::RECEIVER)) {
@@ -66,6 +68,7 @@ class DebtService extends BaseService
         $debt = $this->repository->update($id, $data);
         $data['users'] = array_map(function ($user) use ($debt) {
             $user['debt_id'] = $debt->id;
+            $user['updated_at'] = now()->format('Y-m-d H:i:s');
             return $user;
         }, $data['users']);
         $debt->users()->forceFill($data['users'])->save();
@@ -85,5 +88,21 @@ class DebtService extends BaseService
         $changes = $this->repository->update($id, $data);
         NotifyChangesJob::dispatch($changes);
         return $changes;
+    }
+
+    public function partialPay(int $id, array $data)
+    {
+        $debt = $this->repository->find($id);
+        $data['users'] = array_map(function ($user) use ($debt) {
+            $user['debt_id'] = $debt->id;
+            if ($user['value'] == $user['paid_value']) {
+                $user['paid_at'] = now()->format('Y-m-d H:i:s');
+            }
+            $user['updated_at'] = now()->format('Y-m-d H:i:s');
+            return $user;
+        }, $data['users']);
+        $debt->users()->forceFill($data['users'])->save();
+
+        return $debt;
     }
 }

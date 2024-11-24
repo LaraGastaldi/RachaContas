@@ -76,4 +76,15 @@ class DebtController extends BaseController
 
         return $this->service->updateValues($id, $validated);
     }
+
+    public function partialPay($id, Request $request)
+    {
+        $validated = $request->validate([
+            'user.id' => 'required',
+            'user.value' => 'required',
+            'user.paid_value' => 'required'
+        ]);
+
+        return $this->service->partialPay($id, $validated);
+    }
 }

@@ -17,7 +17,8 @@ class UserToDebt extends Model
         'user_id',
         'debt_id',
         'verify_code',
-        'name'
+        'name',
+        'paid_value'
     ];
 
     public function user()
