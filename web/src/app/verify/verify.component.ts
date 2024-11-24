@@ -1,8 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, Inject } from '@angular/core';
+import { VerifyService } from '../verify-service.service';
 import { ActivatedRoute } from '@angular/router';
-import { UserToDebtService } from '../services/user-to-debt.service';
-import { switchMap } from 'rxjs';
 
+@Inject(VerifyService)
 @Component({
   selector: 'app-verify',
   standalone: true,
@@ -11,17 +11,28 @@ import { switchMap } from 'rxjs';
   styleUrl: './verify.component.css'
 })
 export class VerifyComponent {
-  debtInfo: any;
 
-  constructor(public route: ActivatedRoute, public service: UserToDebtService) {
-    this.debtInfo = this.route.paramMap.pipe(
-      switchMap(params => {
-        const activationCode = params.get('code');
-        if (!activationCode) {
-          return null;
+  code: string|null = null;
+
+  constructor(public service: VerifyService, private route: ActivatedRoute) {
+    try {
+      this.code = this.route.snapshot.params['id'];
+      if (!this.code) {
+        throw new Error('Invalid code');
+      }
+    } catch (e) {
+      window.location.href = '/404';
+      return;
+    }
+
+    this.service.verify(this.code)
+      .subscribe(
+        res => {
+          console.log(res);
+        },
+        err => {
+          console.error(err);
         }
-        return this.service.getDebtInfo(activationCode);
-      })
-    );
+      );
   }
 }
