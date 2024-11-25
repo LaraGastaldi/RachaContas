@@ -12,6 +12,7 @@ class UserToDebtResource extends BaseResource
             'user' => new UserResource($this->user),
             'name' => $this->name,
             'value' => $this->value,
+            'paid_value' => $this->paid_value
         ];
     }
 }
