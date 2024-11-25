@@ -100,7 +100,8 @@ class ApiService {
       return ApiResponse(
           success: false,
           data: response.data,
-          message: 'Erro ao carregar usuário');
+          message: 'Erro ao carregar usuário',
+          logOut: true);
     } catch (e) {
       return ApiResponse(
           success: false, data: null, message: 'Erro ao carregar usuário');
@@ -139,28 +140,31 @@ class ApiService {
       return ApiResponse(
           success: false,
           data: response.data,
-          message: 'Erro ao carregar dívidas');
+          message: 'Erro ao carregar dívidas',
+          logOut: true);
     } catch (e) {
       return ApiResponse(
           success: false, data: null, message: 'Erro ao carregar dívidas');
     }
   }
 
-  Future<ApiResponse> addDebt(String name, String description, double value, DateTime maxPayDate) async {
+  Future<ApiResponse> addDebt(Map<String, dynamic> data) async {
     try {
-      final response = await fetch('debts',
-          data: {
-            'name': name,
-            'description': description,
-            'value': value,
-            'max_pay_date': maxPayDate.toIso8601String()
-          },
+      final response = await fetch('debt',
+          data: data,
           method: 'POST');
       if (response.statusCode == 201) {
         return ApiResponse(
             success: true,
             data: response.data,
             message: 'Dívida adicionada com sucesso');
+      }
+      if (response.statusCode == 401) {
+        return ApiResponse(
+            success: false,
+            data: response.data,
+            message: 'Sessão expirada',
+            logOut: true);
       }
       return ApiResponse(
           success: false,
@@ -177,7 +181,8 @@ class ApiResponse {
   final bool success;
   final dynamic data;
   final String message;
+  final bool logOut;
 
   ApiResponse(
-      {required this.success, required this.data, required this.message});
+      {required this.success, required this.data, required this.message, this.logOut = false});
 }

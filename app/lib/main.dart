@@ -5,6 +5,7 @@ import 'package:rachacontas/providers.dart';
 import 'package:rachacontas/screens/add_debt_screen.dart';
 import 'package:rachacontas/screens/configuration_screen.dart';
 import 'package:rachacontas/screens/dashboard_screen.dart';
+import 'package:rachacontas/screens/debt_screen.dart';
 import 'package:rachacontas/screens/login_screen.dart';
 import 'package:rachacontas/screens/register_screen.dart';
 
@@ -40,7 +41,8 @@ class MyApp extends StatelessWidget {
         '/home': (context) => DashboardScreen(),
         '/register': (context) => RegisterScreen(),
         '/config': (context) => ConfigurationScreen(),
-        '/add-debt': (context) => AddDebtScreen()
+        '/add-debt': (context) => AddDebtScreen(),
+        '/debt': (context) => DebtScreen(),
       },
       initialRoute: '/',
     );
