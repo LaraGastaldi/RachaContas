@@ -14,6 +14,7 @@ class _DebtScreenState extends State<DebtScreen> {
   @override
   Widget build(BuildContext context) {
     final debt = ModalRoute.of(context)!.settings.arguments as Debt;
+    print(debt.toJson());
 
     return Scaffold(
       appBar: AppBar(
@@ -145,7 +146,7 @@ class _DebtScreenState extends State<DebtScreen> {
                           ]),
                       Row(
                         children: [
-                          userToDebt.relationship == 'payer'
+                          userToDebt.relationship == Relationship.PAYER
                               ? Column(
                                   children: [
                                     userToDebt.verifiedAt != null
@@ -154,10 +155,12 @@ class _DebtScreenState extends State<DebtScreen> {
                                         : const Icon(Icons.error,
                                             color: Colors.red),
                                     Text(
+                                        userToDebt.paidValue == (userToDebt.value ?? debt.totalValue) ?
+                                        'Pago' :
                                         userToDebt.verifiedAt != null
                                             ? 'Confirmado'
                                             : 'Não confirmado',
-                                        style: TextStyle(fontSize: 12)),
+                                        style: const TextStyle(fontSize: 12)),
                                   ],
                                 )
                               : SizedBox(),

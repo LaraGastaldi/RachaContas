@@ -10,8 +10,8 @@ class UserToDebt {
   String? email;
   bool? smsSent;
   bool? emailSent;
-  bool? verifiedAt;
-  int? value;
+  String? verifiedAt;
+  double? value;
   User? user;
   double? paidValue;
 
@@ -37,7 +37,7 @@ class UserToDebt {
     smsSent = json['sms_sent'];
     emailSent = json['email_sent'];
     verifiedAt = json['verified_at'];
-    value = json['value'];
+    value = json['value']?.toDouble();
     paidValue = json['paid_value']?.toDouble();
     user = json['user'] != null ? User.fromJson(json['user']) : null;
   }

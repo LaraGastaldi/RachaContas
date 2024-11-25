@@ -113,6 +113,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ],
                 ),
               ),
+              debts[index].getPendingValue() == 0 ?
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.green,
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  padding: const EdgeInsets.all(5),
+                  child: Text('Pago')
+                ) :
               debts[index].isVerified() ?
                 Container(
                   decoration: BoxDecoration(

@@ -73,7 +73,7 @@ class Debt {
     if (userToDebt == null) {
       return true;
     }
-    return userToDebt!.every((element) => element.verifiedAt != null);
+    return userToDebt!.every((element) => element.verifiedAt != null || element.relationship != Relationship.PAYER);
   }
   getPaidValue() {
     double paidValue = 0;
