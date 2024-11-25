@@ -5,6 +5,7 @@ namespace App\Domain\Services;
 use App\Domain\Enum\UserToDebtRelationship;
 use App\Domain\Jobs\NotifyChangesJob;
 use App\Domain\Jobs\NotifyUsersJob;
+use App\Domain\Models\Debt;
 use App\Domain\Repository\DebtRepository;
 use Illuminate\Support\Arr;
 
@@ -45,7 +46,9 @@ class DebtService extends BaseService
                 'name' => auth()->user()->first_name . ' ' . auth()->user()->last_name,
                 'value' => 0,
                 'debt_id' => $debt->id,
-                'verify_code' => null
+                'verify_code' => null,
+                'created_at' => $debt->created_at,
+                'updated_at'=> $debt->updated_at
             ];
         }
         $debt->users()->insert($data['users']);
@@ -53,6 +56,7 @@ class DebtService extends BaseService
         if (isset($data['proofs'])) {
             $data['proofs'] = array_map(function ($proof) use ($debt) {
                 $proof['debt_id'] = $debt->id;
+                $proof['user_id'] = $debt->user_id;
                 return $proof;
             }, $data['proofs']);
             $debt->proofs()->insert($data['proofs']);
@@ -60,26 +64,6 @@ class DebtService extends BaseService
 
         NotifyUsersJob::dispatch($debt);
 
-        return $debt;
-    }
-
-    public function update(int $id, array $data)
-    {
-        $debt = $this->repository->update($id, $data);
-        $data['users'] = array_map(function ($user) use ($debt) {
-            $user['debt_id'] = $debt->id;
-            $user['updated_at'] = now()->format('Y-m-d H:i:s');
-            return $user;
-        }, $data['users']);
-        $debt->users()->forceFill($data['users'])->save();
-
-        if (isset($data['proofs'])) {
-            $data['proofs'] = array_map(function ($proof) use ($debt) {
-                $proof['debt_id'] = $debt->id;
-                return $proof;
-            }, $data['proofs']);
-            $debt->proofs()->forceFill($data['proofs'])->save();
-        }
         return $debt;
     }
 
@@ -104,5 +88,21 @@ class DebtService extends BaseService
         $debt->users()->forceFill($data['users'])->save();
 
         return $debt;
+    }
+
+    public function totalPay(Debt $debt, $proofs = null)
+    {
+        foreach ($debt->users as $user) {
+            if ($user->verified_at == null && $user->relationship == UserToDebtRelationship::PAYER) {
+                abort(403);
+            }
+            $user->paid_value = $user->value ?? $debt->total_value;
+            $user->save();
+        }
+
+        if ($proofs)
+            $debt->proofs()->insert($proofs);
+
+        return $this->repository->find($debt->id);
     }
 }

@@ -35,7 +35,7 @@ class DebtController extends BaseController
             'users.*.phone' => ['required_if:users.*.email,null', new PhoneRule],
             'users.*.email' => 'required_if:users.*.phone,null',
             'users.*.name' => 'required',
-            'users.*.value' => ['required', new RequiredIfArrayBigger($request->input('users'), 1)],
+            'users.*.value' => new RequiredIfArrayBigger($request->input('users'), 1),
             'proofs' => 'nullable|array',
             'proofs.*.src' => 'required',
             'proofs.*.type' => 'required',
@@ -44,28 +44,19 @@ class DebtController extends BaseController
         return $this->service->create($validated);
     }
 
-    public function update($id, Request $request)
+    protected function update($id, Request $request)
     {
         $validated = $request->validate([
             'name' => 'sometimes',
             'description' => 'sometimes',
             'debt_date' => 'sometimes|date',
             'max_pay_date' => 'nullable|date',
-            'users' => 'sometimes|array',
-            'users.*.id' => 'required',
-            'users.*.relationship' => ['required', new RequiredIn(UserToDebtRelationship::getRelationships())],
-            'users.*.phone' => ['required_if:users.*.email,null', new PhoneRule],
-            'users.*.email' => 'required_if:users.*.phone,null',
-            'users.*.name' => 'required',
-            'proofs' => 'nullable|array',
-            'proofs.*.src' => 'sometimes',
-            'proofs.*.type' => 'sometimes',
         ]);
 
         return $this->service->update($id, $validated);
     }
 
-    public function updateValues($id, Request $request)
+    protected function updateUsers($id, Request $request)
     {
         $validated = $request->validate([
             'users' => 'required|array',
@@ -86,5 +77,21 @@ class DebtController extends BaseController
         ]);
 
         return $this->service->partialPay($id, $validated);
+    }
+    protected function totalPay($id, Request $request)
+    {
+        $request->validate([
+            'proofs' => 'sometimes|array',
+            'proofs.*.src' => 'required',
+            'proofs.*.type' => 'required'
+        ]);
+        
+        $debt = $this->service->find($id);
+
+        if ($debt->user_id != auth()->user()->id) {
+            abort(403);
+        }
+
+        return $this->service->totalPay($debt, $request->input('proofs'));
     }
 }

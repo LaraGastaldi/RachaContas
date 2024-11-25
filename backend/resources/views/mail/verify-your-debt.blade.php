@@ -1,6 +1,6 @@
 <html>
     <body style="max-width: 500px;">
-        <table>
+        <table style="text-align: center;">
             <tr style="background-color: #80c783; color: black;">
                 <td>
                     <h2>Olá {{ $user['name'] }}, uma dívida foi registrada em seu e-mail.</h2>
@@ -8,7 +8,7 @@
             </tr>
             <tr>
                 <td>
-                    <p>{{ $debt->user->first_name . ' ' . $debt->user->last_name }} registrou uma dívida no valor de R$ {{ number_format($user['value'], 2) }}</p>
+                    <p>{{ $debt->user->first_name . ' ' . $debt->user->last_name }} registrou uma dívida no valor de R$ {{ number_format($user['value'] == 0 ? $debt['total_value'] : ($user['value']), 2) }}</p>
                 </td>
             </tr>
             <tr>
@@ -18,13 +18,22 @@
                         : '' }}:
                 </td>
             </tr>
-            <tr style="text-align: center; padding: 30px;">
+            <tr>
+                <td>
+                    <hr/>
+                </td>
+            <tr>
                 <td>
                     <a 
                         href="{{ env('VERIFY_URL') }}/{{ $user['verify_code'] }}"
-                        style="border: 0; background-color: #80f783; color: black; padding: 10px 16px; border-radius: 10px;">Acessar</a>
+                        style="border: 0; background-color: #80c783; color: black; padding: 10px 16px; border-radius: 10px;">Acessar</a>
                 </td>
             </tr>
+            <tr>
+                <td>
+                    <hr/>
+                </td>
+            <tr>
             <tr>
                 <td>Ou copie e cole o link abaixo:</td>
             </tr>
