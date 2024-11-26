@@ -5,7 +5,7 @@ class UserDebtController extends GetxController {
   final userDebtFormKey = GlobalKey<FormState>();
   final nameController = TextEditingController();
   final valueController = TextEditingController();
-  final relationshipController = TextEditingController();
+  final relationshipController = TextEditingController(text: 'payer');
   final emailController = TextEditingController();
 
   Map<String, dynamic> toJson() {

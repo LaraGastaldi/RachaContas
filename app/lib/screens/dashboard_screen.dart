@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:rachacontas/models/Debt.dart';
 import 'package:rachacontas/providers.dart';
 import 'package:rachacontas/services/api_service.dart';
+import 'package:intl/intl.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -27,6 +28,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
         setState(() {
           debts = value.data.map((e) => Debt.fromJson(e)).cast<Debt>().toList();
         });
+      } else if (value.logOut) {
+        Get.snackbar('Login', 'Sessão expirada',
+            backgroundColor: Colors.grey);
+        Get.offAllNamed('/login');
       } else {
         Get.snackbar('Dívidas', 'Erro ao buscar dívidas',
             backgroundColor: Colors.redAccent);
@@ -94,10 +99,55 @@ class _DashboardScreenState extends State<DashboardScreen> {
       shrinkWrap: true,
       itemBuilder: (context, index) =>  Card(
         color: Colors.white70,
-        child: ListTile(
-          title: Text(debts[index].name ?? ''),
-          subtitle: Text((debts[index].description ?? '') + '\n' + (debts[index].totalValue).toString()),
-        ),
+        child: Container(
+          padding: const EdgeInsets.all(10),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(debts[index].name ?? ''),
+                    Text('${debts[index].description ?? ''}'),
+                    Text('Total: ${oCcy.format(debts[index].totalValue)}'),
+                  ],
+                ),
+              ),
+              debts[index].getPendingValue() == 0 ?
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.green,
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  padding: const EdgeInsets.all(5),
+                  child: Text('Pago')
+                ) :
+              debts[index].isVerified() ?
+                Container(
+                  decoration: BoxDecoration(
+                    color: (debts[index].getPendingValue() ?? 0) > 0 ? Colors.red.shade200 : Colors.green,
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  padding: const EdgeInsets.all(5),
+                  child: Text('Pendente: ${oCcy.format(debts[index].totalValue)}')
+                )
+              : Container(
+                  decoration: BoxDecoration(
+                    color: Colors.yellow.shade200,
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  padding: const EdgeInsets.all(5),
+                  child: Text('Aguardando confirmação')
+                ),
+              IconButton(
+                icon: const Icon(Icons.arrow_forward_ios),
+                onPressed: () {
+                  Get.toNamed('/debt', arguments: debts[index]);
+                },
+              ),
+            ],
+          )
+        )
       ),
     );
   }
