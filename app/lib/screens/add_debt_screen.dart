@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:camera/camera.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -18,6 +21,14 @@ class AddDebtScreen extends StatefulWidget {
 
 class _AddDebtScreenState extends State<AddDebtScreen> {
   bool loading = false;
+  bool loadingCamera = false;
+  late Future<void> cameraInit;
+  final cameraController = CameraController(
+      const CameraDescription(
+          lensDirection: CameraLensDirection.back,
+          name: 'Tirar foto',
+          sensorOrientation: 0),
+      ResolutionPreset.medium);
 
   @override
   void initState() {
@@ -26,6 +37,8 @@ class _AddDebtScreenState extends State<AddDebtScreen> {
         this.loading = loading;
       });
     });
+
+    cameraInit = cameraController.initialize();
     super.initState();
   }
 
@@ -40,16 +53,19 @@ class _AddDebtScreenState extends State<AddDebtScreen> {
       bottomNavigationBar: BottomAppBar(
         color: Colors.transparent,
         child: ElevatedButton(
-          onPressed: loading ? null : () {
-            widget.addDebtController.send();
-          },
+          onPressed: loading
+              ? null
+              : () {
+                  widget.addDebtController.send();
+                },
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.green,
             padding: const EdgeInsets.all(20.0),
           ),
-          child: loading ? const CircularProgressIndicator() :
-          const Text('Criar',
-              style: TextStyle(color: Colors.white, fontSize: 16)),
+          child: loading
+              ? const CircularProgressIndicator()
+              : const Text('Criar',
+                  style: TextStyle(color: Colors.white, fontSize: 16)),
         ),
       ),
       body: Center(
@@ -127,8 +143,8 @@ class _AddDebtScreenState extends State<AddDebtScreen> {
                             .add(UserDebtController());
                       });
                     },
-                    child: const Text('Adicionar usuário', style: TextStyle(color: Colors.white))),
-
+                    child: const Text('Adicionar usuário',
+                        style: TextStyle(color: Colors.white))),
                 const Divider(color: Colors.transparent, height: 20.0),
                 ListView.builder(
                   itemBuilder: (context, index) {
@@ -180,8 +196,7 @@ class _AddDebtScreenState extends State<AddDebtScreen> {
                             const Divider(
                                 color: Colors.transparent, height: 20.0),
                             CupertinoTextFormFieldRow(
-                              placeholder:
-                                  'Valor da dívida',
+                              placeholder: 'Valor da dívida',
                               controller: widget.addDebtController
                                   .userController[index].valueController,
                               inputFormatters: [
@@ -203,7 +218,8 @@ class _AddDebtScreenState extends State<AddDebtScreen> {
                                 return null;
                               },
                             ),
-                            const Text('O valor é opcional se for o único pagador ou se for uma testemunha'),
+                            const Text(
+                                'O valor é opcional se for o único pagador ou se for uma testemunha'),
                             const Divider(
                                 color: Colors.transparent, height: 20.0),
                             Row(children: [
@@ -348,6 +364,104 @@ class _AddDebtScreenState extends State<AddDebtScreen> {
                           children: [
                             Row(
                               children: [
+                                FutureBuilder(
+                                    future: cameraInit,
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return const CircularProgressIndicator();
+                                      }
+                                      return Padding(
+                                        padding:
+                                            const EdgeInsets.only(right: 10.0),
+                                        child: InkWell(
+                                          onTap: () {
+                                            showDialog(
+                                                context: context,
+                                                builder: (context) {
+                                                  return Dialog(
+                                                      child: Column(
+                                                    children: [
+                                                      CameraPreview(
+                                                          cameraController),
+                                                      ElevatedButton(
+                                                          onPressed:
+                                                              loadingCamera
+                                                                  ? null
+                                                                  : () {
+                                                                      setState(
+                                                                          () {
+                                                                        loadingCamera =
+                                                                            true;
+                                                                      });
+                                                                      cameraController
+                                                                          .takePicture()
+                                                                          .then(
+                                                                              (value) {
+                                                                        value.readAsBytes().then(
+                                                                            (val) {
+                                                                          widget
+                                                                              .addDebtController
+                                                                              .proofController[index]
+                                                                              .srcController
+                                                                              .text = base64Encode(val);
+                                                                          setState(
+                                                                              () {});
+                                                                          Get.showSnackbar(const GetSnackBar(
+                                                                              title: 'Sucesso',
+                                                                              message: 'Foto tirada com sucesso'));
+                                                                          Get.back();
+                                                                          Get.back();
+                                                                        }).catchError(
+                                                                            (e) {
+                                                                          Get.showSnackbar(const GetSnackBar(
+                                                                              title: 'Erro',
+                                                                              message: 'Erro ao tirar a foto'));
+                                                                        }).whenComplete(
+                                                                            () {
+                                                                          setState(
+                                                                              () {
+                                                                            loadingCamera =
+                                                                                false;
+                                                                          });
+                                                                        });
+                                                                      }).catchError(
+                                                                              (e) {
+                                                                        Get.showSnackbar(const GetSnackBar(
+                                                                            title:
+                                                                                'Erro',
+                                                                            message:
+                                                                                'Erro ao tirar a foto'));
+                                                                      });
+                                                                    },
+                                                          child: const Text(
+                                                              'Tirar foto'))
+                                                    ],
+                                                  ));
+                                                });
+                                          },
+                                          child: Container(
+                                            width: 100.0,
+                                            height: 100.0,
+                                            decoration: BoxDecoration(
+                                              color: Colors.black12,
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                            ),
+                                            child: const Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                Icon(Icons.add_a_photo),
+                                                Text('Adicionar foto')
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    }),
                                 Padding(
                                   padding: const EdgeInsets.only(right: 10.0),
                                   child: InkWell(
@@ -357,47 +471,36 @@ class _AddDebtScreenState extends State<AddDebtScreen> {
                                       height: 100.0,
                                       decoration: BoxDecoration(
                                         color: Colors.black12,
-                                        borderRadius: BorderRadius.circular(8.0),
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
                                       ),
                                       child: const Column(
                                         mainAxisAlignment:
-                                        MainAxisAlignment.center,
+                                            MainAxisAlignment.center,
                                         crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                        children: [
-                                          Icon(Icons.add_a_photo),
-                                          Text('Adicionar foto')
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(right: 10.0),
-                                  child: InkWell(
-                                    onTap: () {},
-                                    child: Container(
-                                      width: 100.0,
-                                      height: 100.0,
-                                      decoration: BoxDecoration(
-                                        color: Colors.black12,
-                                        borderRadius: BorderRadius.circular(8.0),
-                                      ),
-                                      child: const Column(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                        CrossAxisAlignment.center,
+                                            CrossAxisAlignment.center,
                                         children: [
                                           Icon(Icons.add_photo_alternate),
                                           Text('Selecionar foto')
                                         ],
                                       ),
                                     ),
-                                  )
-                                )
+                                  ),
+                                ),
                               ],
                             ),
+                            if (widget.addDebtController.proofController[index]
+                                .srcController.text.isNotEmpty)
+                              Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: Image(
+                                  image: MemoryImage(base64Decode(widget
+                                      .addDebtController
+                                      .proofController[index]
+                                      .srcController
+                                      .text)),
+                                ),
+                              ),
                             const Divider(
                                 color: Colors.transparent, height: 20.0),
                             ElevatedButton(
@@ -426,6 +529,12 @@ class _AddDebtScreenState extends State<AddDebtScreen> {
                                 color: Colors.transparent, height: 10.0),
                             Text('Comprovante ${index + 1}'),
                             Expanded(child: Container()),
+                            if (widget.addDebtController.proofController[index]
+                                    .srcController.text.isNotEmpty)
+                              const Icon(
+                                Icons.check,
+                                color: Colors.green,
+                              ),
                             IconButton(
                               icon: const Icon(Icons.edit),
                               onPressed: () {
@@ -441,7 +550,8 @@ class _AddDebtScreenState extends State<AddDebtScreen> {
                                     context: context,
                                     builder: (context) {
                                       return AlertDialog(
-                                          title: const Text('Remover comprovante'),
+                                          title:
+                                              const Text('Remover comprovante'),
                                           content: const Text(
                                               'Deseja realmente remover esse comprovante?'),
                                           actions: [

@@ -45,11 +45,11 @@ class AddDebtController extends GetxController {
       }
       print(userController[0].toJson());
       if (userController.any((element) => element.emailController.text.isEmpty || element.nameController.text.isEmpty)) {
-        Get.snackbar('Falha', 'Preencha as informações do usuário');
+        Get.snackbar('Falha', 'Preencha todas as informações do(s) usuário(s)');
         return false;
       }
       if (proofController.any((element) => element.srcController.text.isEmpty)) {
-        Get.snackbar('Falha', 'Preencha as informações do usuário');
+        Get.snackbar('Falha', 'Todos os comprovantes devem ter uma foto');
         return false;
       }
       eventhub.fire('loading', true);
