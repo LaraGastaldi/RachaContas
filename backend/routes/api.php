@@ -8,3 +8,5 @@ Route::middleware(\App\Domain\Middlewares\SemiAuthMiddleware::class)->group(func
     include_once(base_path() . '/routes/Debt/debt.php');
     include_once(base_path() . '/routes/UserToDebt/user_to_debt.php');
 });
+
+include_once(base_path() . '/routes/Other/open-routes.php');

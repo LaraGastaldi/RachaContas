@@ -11,33 +11,41 @@ class UserDebtController extends BaseController
 {
     protected $resource = UserToDebtResource::class;
     /**
-     * @var \App\Domain\Services\UserToDebtService
+     * @var UserToDebtService
      */
     protected $service = UserToDebtService::class;
     
-    public function getUserInfo($code)
+    public function getUserInfo($code): array
     {
         $userDebt = UserToDebt::where('verify_code', '=', $code)->firstOrFail();
         
         $debt = $userDebt->debt;
 
-        $userDebt = new UserToDebtResource($userDebt);
-        $debt = new DebtResource($debt);
-
-        return response()->json([
+        return [
             'user' => $userDebt,
             'debt' => $debt
-        ], 200);
+        ];
     }
 
-    public function verify($code)
+    public function verifyView($code): \Illuminate\View\View
     {
-        UserToDebt::where('verify_code', '=', $code)->firstOrFail();
+        $info = $this->getUserInfo($code);
 
-        UserToDebt::where('verify_code', '=', $code)->update([
+        return view('pages.verify-debt', $info);
+    }
+    public function verify($id): \Illuminate\Http\RedirectResponse
+    {
+        UserToDebt::where('id', '=', $id)->firstOrFail();
+
+        UserToDebt::where('id', '=', $id)->update([
             'verfied_at' => now()->format('Y-m-d H:i:s')
         ]);
         
-        return response()->json(['message' => 'OK'], 200);
+        return redirect()->route('user-to-debt.verified');
+    }
+
+    public function verified(): \Illuminate\View\View
+    {
+        return view('pages.verified-debt');
     }
 }

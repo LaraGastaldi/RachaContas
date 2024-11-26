@@ -67,13 +67,6 @@ class DebtService extends BaseService
         return $debt;
     }
 
-    public function updateValues(int $id, array $data)
-    {
-        $changes = $this->repository->update($id, $data);
-        NotifyChangesJob::dispatch($changes);
-        return $changes;
-    }
-
     public function partialPay(int $id, array $data)
     {
         $debt = $this->repository->find($id);

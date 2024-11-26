@@ -56,18 +56,6 @@ class DebtController extends BaseController
         return $this->service->update($id, $validated);
     }
 
-    protected function updateUsers($id, Request $request)
-    {
-        $validated = $request->validate([
-            'users' => 'required|array',
-            'users.*.id' => 'required',
-            'users.*.value' => 'required',
-            'total_value' => 'required',
-        ]);
-
-        return $this->service->updateValues($id, $validated);
-    }
-
     public function partialPay($id, Request $request)
     {
         $validated = $request->validate([
@@ -85,7 +73,7 @@ class DebtController extends BaseController
             'proofs.*.src' => 'required',
             'proofs.*.type' => 'required'
         ]);
-        
+
         $debt = $this->service->find($id);
 
         if ($debt->user_id != auth()->user()->id) {
