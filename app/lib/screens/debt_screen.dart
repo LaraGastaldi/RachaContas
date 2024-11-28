@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rachacontas/models/Debt.dart';
 import 'package:rachacontas/models/UserToDebt.dart';
+import 'package:get/get.dart';
 
 class DebtScreen extends StatefulWidget {
   const DebtScreen({super.key});
@@ -14,7 +15,6 @@ class _DebtScreenState extends State<DebtScreen> {
   @override
   Widget build(BuildContext context) {
     final debt = ModalRoute.of(context)!.settings.arguments as Debt;
-    print(debt.toJson());
 
     return Scaffold(
       appBar: AppBar(
@@ -33,16 +33,38 @@ class _DebtScreenState extends State<DebtScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               InkWell(
-                onTap: () {},
-                child: const Text('Pagar'),
+                onTap: !debt.isVerified()
+                    ? () {
+                        Get.showSnackbar(const GetSnackBar(
+                          title: 'Falha',
+                          message:
+                              'Não é possível pagar uma dívida não confirmada',
+                          backgroundColor: Colors.red,
+                        ));
+                      }
+                    : (debt.getPendingValue() == 0
+                        ? () {
+                            Get.showSnackbar(const GetSnackBar(
+                                title: 'Falha',
+                                message: 'Dívida já paga',
+                                backgroundColor: Colors.red));
+                          }
+                        : () {
+                      Get.toNamed('/pay-debt', arguments: debt);
+                }),
+                child: Text('Pagar',
+                    style: TextStyle(
+                        color: !debt.isVerified() || debt.getPendingValue() == 0
+                            ? Colors.grey
+                            : Colors.green)),
               ),
               InkWell(
                 onTap: () {},
-                child: const Text('Excluir', style: TextStyle(color: Colors.red)),
+                child:
+                    const Text('Excluir', style: TextStyle(color: Colors.red)),
               ),
             ],
           ),
-
         ),
       ),
       body: ListView(
@@ -155,11 +177,13 @@ class _DebtScreenState extends State<DebtScreen> {
                                         : const Icon(Icons.error,
                                             color: Colors.red),
                                     Text(
-                                        userToDebt.paidValue == (userToDebt.value ?? debt.totalValue) ?
-                                        'Pago' :
-                                        userToDebt.verifiedAt != null
-                                            ? 'Confirmado'
-                                            : 'Não confirmado',
+                                        userToDebt.paidValue ==
+                                                (userToDebt.value ??
+                                                    debt.totalValue)
+                                            ? 'Pago'
+                                            : userToDebt.verifiedAt != null
+                                                ? 'Confirmado'
+                                                : 'Não confirmado',
                                         style: const TextStyle(fontSize: 12)),
                                   ],
                                 )

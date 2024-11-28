@@ -17,16 +17,26 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
 
   List<Debt> debts = [];
+  List<Debt> otherDebts = [];
   bool loading = false;
 
   @override
   void initState() {
     super.initState();
 
+    getDebts();
+  }
+
+  void getDebts() {
+    setState(() {
+      loading = true;
+    });
+
     getIt<ApiService>().getDebts().then((value) {
       if (value.success) {
         setState(() {
-          debts = value.data.map((e) => Debt.fromJson(e)).cast<Debt>().toList();
+          debts = value.data['own'].map((e) => Debt.fromJson(e)).cast<Debt>().toList();
+          otherDebts = value.data['others'].map((e) => Debt.fromJson(e)).cast<Debt>().toList();
         });
       } else if (value.logOut) {
         Get.snackbar('Login', 'Sessão expirada',
@@ -36,8 +46,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
         Get.snackbar('Dívidas', 'Erro ao buscar dívidas',
             backgroundColor: Colors.redAccent);
       }
+    }).whenComplete(() {
+      setState(() {
+        loading = false;
+      });
     });
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +60,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
       appBar: AppBar(
         title: const Text('Minhas dívidas'),
         actions: [
+          IconButton(
+              onPressed: () {
+                getDebts();
+              },
+              icon: const Icon(Icons.update)
+          ),
           IconButton(
             icon: const Icon(Icons.settings),
             onPressed: () {},
@@ -56,7 +77,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
         headerWidget: headerWidget(context),
         headerBottomBar: headerBottomBarWidget(),
         body: [
-          debts.length == 0 ? Text('Sem dívidas a mostrar')
+          loading ? const Center(child: CircularProgressIndicator()) :
+          debts.isEmpty ? Text('Sem dívidas a mostrar')
           : listView(debts),
         ],
         fullyStretchable: true,
@@ -108,7 +130,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(debts[index].name ?? ''),
-                    Text('${debts[index].description ?? ''}'),
+                    Text(debts[index].description ?? ''),
                     Text('Total: ${oCcy.format(debts[index].totalValue)}'),
                   ],
                 ),
@@ -122,7 +144,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   padding: const EdgeInsets.all(5),
                   child: Text('Pago')
                 ) :
-              debts[index].isVerified() ?
+              (debts[index].isVerified() ?
                 Container(
                   decoration: BoxDecoration(
                     color: (debts[index].getPendingValue() ?? 0) > 0 ? Colors.red.shade200 : Colors.green,
@@ -138,7 +160,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ),
                   padding: const EdgeInsets.all(5),
                   child: Text('Aguardando confirmação')
-                ),
+                )),
               IconButton(
                 icon: const Icon(Icons.arrow_forward_ios),
                 onPressed: () {

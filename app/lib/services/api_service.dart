@@ -175,6 +175,34 @@ class ApiService {
           success: false, data: null, message: 'Erro ao adicionar dívida');
     }
   }
+
+  Future<ApiResponse> totalPay(int id) {
+    try {
+      return fetch('debt/$id/total-pay', method: 'POST')
+        .then((response) {
+          if (response.statusCode == 200) {
+            return ApiResponse(
+                success: true,
+                data: response.data,
+                message: 'Dívida paga com sucesso');
+          }
+          if (response.statusCode == 401) {
+            return ApiResponse(
+                success: false,
+                data: response.data,
+                message: 'Sessão expirada',
+                logOut: true);
+          }
+          return ApiResponse(
+              success: false,
+              data: response.data,
+              message: 'Erro ao pagar dívida');
+        });
+    } catch (e) {
+      return Future.value(ApiResponse(
+          success: false, data: null, message: 'Erro ao pagar dívida'));
+    }
+  }
 }
 
 class ApiResponse {
