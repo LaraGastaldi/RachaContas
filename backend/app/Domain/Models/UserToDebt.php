@@ -21,12 +21,12 @@ class UserToDebt extends Model
         'paid_value'
     ];
 
-    public function user()
+    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function debt()
+    public function debt(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Debt::class);
     }

@@ -30,7 +30,9 @@ abstract class BaseController
 
     public function __construct()
     {
-        $this->service = new $this->service();
+        if ($this->service) {
+            $this->service = new $this->service();
+        }
     }
 
 
