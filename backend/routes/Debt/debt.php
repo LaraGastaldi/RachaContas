@@ -14,4 +14,6 @@ Route::middleware(
         ->can('debt_owner', Debt::class);
     Route::post('/debt/{id}/total-pay', [DebtController::class, 'totalPay'])
         ->can('debt_owner', Debt::class);
+    Route::post('/debt/partial-pay', [DebtController::class,'partialPay'])
+        ->can('debt_owner', Debt::class);
 });

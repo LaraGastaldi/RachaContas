@@ -17,7 +17,7 @@ class DebtController extends BaseController
      */
     protected $service = DebtService::class;
 
-    protected function getAllByUser()
+    public function getAllByUser()
     {
         return $this->service->getAllByUser();
     }

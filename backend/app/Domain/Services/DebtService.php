@@ -7,6 +7,7 @@ use App\Domain\Jobs\NotifyChangesJob;
 use App\Domain\Jobs\NotifyUsersJob;
 use App\Domain\Models\Debt;
 use App\Domain\Repository\DebtRepository;
+use App\Domain\Resources\DebtResource;
 use Illuminate\Support\Arr;
 
 class DebtService extends BaseService
@@ -16,7 +17,14 @@ class DebtService extends BaseService
     public function getAllByUser()
     {
         $userId = auth()->user()->id;
-        return $this->repository->getAllByUser($userId);
+        $own = $this->repository->getAllByUser($userId);
+
+        $others = $this->repository->getAllIncludingYou(auth()->user());
+
+        return [
+            'own' => DebtResource::collection($own),
+            'others' => DebtResource::collection($others)
+        ];
     }
 
     public function create(array $data)
