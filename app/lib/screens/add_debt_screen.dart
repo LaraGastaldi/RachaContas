@@ -407,11 +407,11 @@ class _AddDebtScreenState extends State<AddDebtScreen> {
                                                                               .text = base64Encode(val);
                                                                           setState(
                                                                               () {});
+                                                                          Get.back();
+                                                                          Get.back();
                                                                           Get.showSnackbar(const GetSnackBar(
                                                                               title: 'Sucesso',
                                                                               message: 'Foto tirada com sucesso'));
-                                                                          Get.back();
-                                                                          Get.back();
                                                                         }).catchError(
                                                                             (e) {
                                                                           Get.showSnackbar(const GetSnackBar(
