@@ -15,7 +15,7 @@ jobs:
         uses: easingthemes/ssh-deploy@v2.1.5
         env:
           SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
-          SOURCE: "./backend"
+          SOURCE: "backend"
           REMOTE_HOST: "18.191.211.138"
           REMOTE_USER: "ubuntu"
           TARGET: "/var/www/sites/rachacontas"
