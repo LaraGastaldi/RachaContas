@@ -45,4 +45,12 @@ class Debt extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    protected static function booted()
+    {
+        static::deleting(function (Debt $debt) {
+            $debt->users()->delete();
+            $debt->proofs()->delete();
+        });
+    }
 }

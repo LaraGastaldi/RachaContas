@@ -97,7 +97,8 @@ class DebtService extends BaseService
             if ($user->verified_at == null && $user->relationship == UserToDebtRelationship::PAYER) {
                 abort(403);
             }
-            $user->paid_value = $user->value ?? $debt->total_value;
+            if ($user->relationship != UserToDebtRelationship::PAYER) continue;
+            $user->paid_value = $user->value != 0 ? $user->value : $debt->total_value;
             $user->save();
         }
 

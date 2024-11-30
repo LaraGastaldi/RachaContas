@@ -6,6 +6,7 @@ use App\Domain\Models\UserToDebt;
 use App\Domain\Resources\DebtResource;
 use App\Domain\Resources\UserToDebtResource;
 use App\Domain\Services\UserToDebtService;
+use Illuminate\Http\Request;
 
 class UserDebtController extends BaseController
 {
@@ -35,17 +36,27 @@ class UserDebtController extends BaseController
     }
     public function verify($id): \Illuminate\Http\RedirectResponse
     {
-        UserToDebt::where('id', '=', $id)->firstOrFail();
+        $user = UserToDebt::where('id','=', $id)->firstOrFail();
+        $user->verified_at = now()->format('Y-m-d H:i:s');
+        $user->save();
 
-        UserToDebt::where('id', '=', $id)->update([
-            'verfied_at' => now()->format('Y-m-d H:i:s')
-        ]);
-        
         return redirect()->route('user-to-debt.verified');
     }
 
     public function verified(): \Illuminate\View\View
     {
         return view('pages.verified-debt');
+    }
+
+    public function update(int $id, Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'sometimes',
+            'value' => 'sometimes',
+            'relationship' => 'sometimes',
+            'email' => 'sometimes',
+        ]);
+
+        return $this->service->update($id, $validated);
     }
 }

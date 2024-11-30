@@ -6,12 +6,12 @@ use App\Domain\Enum\ProofType;
 use App\Domain\Models\Debt;
 use App\Domain\Models\UserToDebt;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Attachment;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Storage;
 
 class DebtNotification extends Mailable
 {
@@ -39,7 +39,7 @@ class DebtNotification extends Mailable
     /**
      * Get the message content definition.
      */
-    public function content(): Content
+    public function content(): Content  
     {
         return new Content(
             view: 'mail.verify-your-debt',
@@ -59,7 +59,8 @@ class DebtNotification extends Mailable
     {
         return $this->debt->proofs->filter(fn ($proof) => $proof->type == ProofType::RECEIPT)
         ->map(function ($proof, $idx) {
-            return Attachment::fromData($proof->src, "img$idx.jpg")->withMime('image/jpeg');
+            $attach = Attachment::fromData(fn () => $proof->src, "comprovante$idx.jpeg")->withMime('image/jpeg');
+            return $attach;
         })
         ->toArray();
     }

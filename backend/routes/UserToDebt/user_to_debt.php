@@ -10,8 +10,8 @@ Route::middleware(
     )->group(function () {
     Route::delete('/user-to-debt/{id}', [UserDebtController::class,'delete'])
         ->name('user-to-debt.delete')
-        ->can('user_debt_owner', UserToDebt::class);
+        ->can('user_debt_owner', 'id');
     Route::patch('/user-to-debt/{id}', [UserDebtController::class, 'update'])
         ->name('user-to-debt.udpate')
-        ->can('user_debt_owner', UserToDebt::class);
+        ->can('user_debt_owner', 'id');
 });

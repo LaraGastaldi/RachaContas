@@ -28,11 +28,16 @@ class AppServiceProvider extends ServiceProvider
     {
         JsonResource::withoutWrapping();
 
-        Gate::define("debt_owner", function ($user, Debt $debt) {
+        Gate::define("debt_owner", function ($user, int $debtId) {
+            $debt = Debt::findOrFail($debtId);
             return $user->id === $debt->user_id;
         });
 
-        Gate::define("user_debt_owner", function ($user, UserToDebt $userToDebt) {
+        Gate::define("user_debt_owner", function ($user, int $userToDebtId) {   
+            $userToDebt = UserToDebt::find($userToDebtId);
+            if (! $userToDebt) {
+                return false;
+            }
             return $user->id === $userToDebt->debt->user_id;
         });
     }
