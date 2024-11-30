@@ -60,7 +60,7 @@ class _PayDebtScreenState extends State<PayDebtScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              InkWell(
+              GestureDetector(
                 onTap: () {
                   getIt<ApiService>().totalPay(debt.id!).then((value) {
                     if (value.success) {
@@ -127,18 +127,18 @@ class _PayDebtScreenState extends State<PayDebtScreen> {
                             ],
                           ),
                           const Spacer(),
-                          InkWell(
-                            onTap: () {
-                              showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return _makePayDialog(
-                                        e: e, debt: debt, context: context);
-                                  });
-                            },
-                            child: const Text('Pagar',
-                                style: TextStyle(color: Colors.green)),
-                          ),
+                          // InkWell(
+                          //   onTap: () {
+                          //     showDialog(
+                          //         context: context,
+                          //         builder: (context) {
+                          //           return _makePayDialog(
+                          //               e: e, debt: debt, context: context);
+                          //         });
+                          //   },
+                          //   child: const Text('Pagar',
+                          //       style: TextStyle(color: Colors.green)),
+                          // ),
                         ],
                       ),
                     ),

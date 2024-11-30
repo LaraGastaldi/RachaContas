@@ -13,6 +13,7 @@ class ApiService {
       bool retry = false}) async {
     try {
       log('Fetching $uri', name: 'API Request');
+      log('data: $data', name: 'API Request');
       final response = await Dio().request(
         "${await EnvService.get('API_URL')}/$uri",
         queryParameters: queryParameters,
@@ -201,6 +202,110 @@ class ApiService {
     } catch (e) {
       return Future.value(ApiResponse(
           success: false, data: null, message: 'Erro ao pagar dívida'));
+    }
+  }
+
+  Future<ApiResponse> editUser(int id, Map<String, dynamic> data) async {
+    try {
+      final response = await fetch('user-to-debt/$id', data: data, method: 'PATCH');
+      if (response.statusCode == 200) {
+        return ApiResponse(
+            success: true,
+            data: response.data,
+            message: 'Usuário editado com sucesso');
+      }
+      if (response.statusCode == 401) {
+        return ApiResponse(
+            success: false,
+            data: response.data,
+            message: 'Sessão expirada',
+            logOut: true);
+      }
+      return ApiResponse(
+          success: false,
+          data: response.data,
+          message: 'Erro ao editar usuário');
+    } catch (e) {
+      return ApiResponse(
+          success: false, data: null, message: 'Erro ao editar usuário');
+    }
+  }
+
+  Future<ApiResponse> deleteDebt(int id) async {
+    try {
+      final response = await fetch('debt/$id', method: 'DELETE');
+      if (response.statusCode == 200) {
+        return ApiResponse(
+            success: true,
+            data: response.data,
+            message: 'Dívida excluída com sucesso');
+      }
+      if (response.statusCode == 401) {
+        return ApiResponse(
+            success: false,
+            data: response.data,
+            message: 'Sessão expirada',
+            logOut: true);
+      }
+      return ApiResponse(
+          success: false,
+          data: response.data,
+          message: 'Erro ao excluir dívida');
+    } catch (e) {
+      return ApiResponse(
+          success: false, data: null, message: 'Erro ao excluir dívida');
+    }
+  }
+
+  Future<ApiResponse> editDebt(int id, Map<String, dynamic> data) async {
+    try {
+      final response = await fetch('debt/$id', method: 'PATCH', data: data);
+      if (response.statusCode == 200) {
+        return ApiResponse(
+            success: true,
+            data: response.data,
+            message: 'Dívida excluída com sucesso');
+      }
+      if (response.statusCode == 401) {
+        return ApiResponse(
+            success: false,
+            data: response.data,
+            message: 'Sessão expirada',
+            logOut: true);
+      }
+      return ApiResponse(
+          success: false,
+          data: response.data,
+          message: 'Erro ao excluir dívida');
+    } catch (e) {
+      return ApiResponse(
+          success: false, data: null, message: 'Erro ao excluir dívida');
+    }
+  }
+
+  Future<ApiResponse> getDebt(int id) async {
+    try {
+      final response = await fetch('debt/$id');
+      if (response.statusCode == 200) {
+        return ApiResponse(
+            success: true,
+            data: response.data,
+            message: 'Dívida carregada com sucesso');
+      }
+      if (response.statusCode == 401) {
+        return ApiResponse(
+            success: false,
+            data: response.data,
+            message: 'Sessão expirada',
+            logOut: true);
+      }
+      return ApiResponse(
+          success: false,
+          data: response.data,
+          message: 'Erro ao carregar dívida');
+    } catch (e) {
+      return ApiResponse(
+          success: false, data: null, message: 'Erro ao carregar dívida');
     }
   }
 }
