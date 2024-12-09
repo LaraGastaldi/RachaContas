@@ -3,7 +3,7 @@
 Esse é o projeto de Portfólio de Projeto, da faculdade de Engenharia de Software na Católica de Santa Catarina
 
 ## Estrutura do projeto
-- [backend](https://github.com/LaraGastaldi/RachaContas/tree/master/backend)
+- [backend](https://github.com/LaraGastaldi/RachaContasBackend)
 
   Backend em Laravel 11, utilizando a biblioteca Tymon/jwt-auth para autenticação JWT.
 
