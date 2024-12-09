@@ -54,6 +54,11 @@ class _DebtScreenState extends State<DebtScreen> {
       appBar: AppBar(
         title: const Text('Dívida'),
         actions: [
+          BackButton(
+            onPressed: () {
+              Get.offAllNamed('/');
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.settings),
             onPressed: () {},
