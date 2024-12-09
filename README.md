@@ -7,7 +7,7 @@ Esse é o projeto de Portfólio de Projeto, da faculdade de Engenharia de Softwa
 
   Backend em Laravel 11, utilizando a biblioteca Tymon/jwt-auth para autenticação JWT.
 
-- [app](https://github.com/LaraGastaldi/RachaContas/tree/master/app)
+- [app](https://github.com/LaraGastaldi/RachaContasApp)
   
   Aplicativo em Flutter 3
 
